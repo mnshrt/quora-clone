@@ -1,11 +1,15 @@
 package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.UserDao;
+import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
 
 /**
  * @author Karan Pillai (https://github.com/KaranP3)
@@ -41,10 +45,11 @@ public class UserService {
         String[] encryptPassword = passwordCryptographyProvider.encrypt(userEntity.getPassword());
         String salt = encryptPassword[0];
         userEntity.setSalt(salt);
-        String encryptedPassword = PasswordCryptographyProvider.encrypt(encryptPassword[1],salt);
-        userEntity.setPassword(encryptedPassword);
+        userEntity.setPassword(encryptPassword[1]);
         return userDao.createUser(userEntity);
     }
+
+
 
     /**
      * Method to get user by username.
@@ -67,5 +72,6 @@ public class UserService {
 
         return userDao.findUserByEmail(email);
     }
+
 
 }
