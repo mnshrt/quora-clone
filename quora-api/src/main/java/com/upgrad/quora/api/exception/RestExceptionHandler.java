@@ -1,6 +1,7 @@
 package com.upgrad.quora.api.exception;
 
 import com.upgrad.quora.api.model.ErrorResponse;
+import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class RestExceptionHandler {
 
     /**
      * Method that implements the exception handler for the SignUpRestrictedException.
+     *
      * @param ex instance of SignUpRestrictedException
      * @param request instance of WebRequest
      * @return ResponseEntity with the error response
@@ -29,5 +31,20 @@ public class RestExceptionHandler {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Method that implements the exception handler for AuthenticationFailedException
+     *
+     * @param ex instance of AuthenticationFailedException
+     * @param request instance of WebRequest
+     * @return ResponseEntity with the error response
+     */
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> authenticationFailedException(AuthenticationFailedException ex,
+                                                                       WebRequest request) {
+
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse()
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.UNAUTHORIZED);
     }
 }

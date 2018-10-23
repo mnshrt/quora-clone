@@ -1,17 +1,25 @@
 package com.upgrad.quora.api.controller;
 
+import com.upgrad.quora.api.model.SigninResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
+import com.upgrad.quora.service.business.AuthenticationService;
 import com.upgrad.quora.service.business.UserService;
+import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+
+import java.util.Base64;
 import java.util.UUID;
 
 /**
@@ -25,8 +33,12 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    AuthenticationService authenticationService;
+
     /**
      * Method that implements the user signup endpoint.
+     *
      * @param signupUserRequest to get user credentials
      * @return ResponseEntity to indicate whether sign up is successful or not
      * @throws SignUpRestrictedException in cases where username already exists, or email is already registered
@@ -71,7 +83,37 @@ public class UserController {
 
             return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
         }
+    }
 
+    /**
+     * Method that implements user signin endpoint.
+     *
+     * @param authorization string containing "Basic username:password" where "username:password" is Base64 encoded
+     * @return ResponseEntity with SignInResponse, HTTPHeader, and HTTPStatus
+     * @throws AuthenticationFailedException in cases where the password is wrong or user does not exist
+     */
+
+    @PostMapping(path = "/user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<SigninResponse> signIn(@RequestHeader("authorization") final String authorization) throws
+            AuthenticationFailedException{
+
+        byte[] decodeAuth = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+        System.out.println(decodeAuth);
+        String decodedAuth = new String(decodeAuth);
+        String[] decodedAuthArray = decodedAuth.split(":");
+
+        UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedAuthArray[0],
+                decodedAuthArray[1]);
+
+        UserEntity userEntity = userAuthToken.getUser();
+
+        SigninResponse signinResponse = new SigninResponse().id(userEntity.getUuid())
+                .message("SIGNED IN SUCCESSFULLY");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("access_token", userAuthToken.getAccessToken());
+
+        return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
     }
 
 }
