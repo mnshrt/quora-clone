@@ -2,6 +2,7 @@ package com.upgrad.quora.api.exception;
 
 import com.upgrad.quora.api.model.ErrorResponse;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class RestExceptionHandler {
                                                                     WebRequest request){
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
-                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.FORBIDDEN);
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.CONFLICT);
     }
 
     /**
@@ -40,11 +41,28 @@ public class RestExceptionHandler {
      * @param request instance of WebRequest
      * @return ResponseEntity with the error response
      */
+
     @ExceptionHandler(AuthenticationFailedException.class)
     public ResponseEntity<ErrorResponse> authenticationFailedException(AuthenticationFailedException ex,
                                                                        WebRequest request) {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Method that implements exception handler for SignOutRestrictedException
+     *
+     * @param ex instance of SignOutRestrictedException
+     * @param request instance of WebRequest
+     * @return ResponseEntity with error response
+     */
+
+    @ExceptionHandler(SignOutRestrictedException.class)
+    public ResponseEntity<ErrorResponse> signOutRestrictedException(SignOutRestrictedException ex,
+                                                                    WebRequest request) {
+
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse().code(ex.getCode())
+                .message(ex.getErrorMessage()), HttpStatus.UNAUTHORIZED);
     }
 }

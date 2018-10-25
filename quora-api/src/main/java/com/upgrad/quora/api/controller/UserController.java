@@ -1,6 +1,7 @@
 package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.SigninResponse;
+import com.upgrad.quora.api.model.SignoutResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
 import com.upgrad.quora.service.business.AuthenticationService;
@@ -8,6 +9,7 @@ import com.upgrad.quora.service.business.UserService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +37,7 @@ public class UserController {
 
     @Autowired
     AuthenticationService authenticationService;
+
 
     /**
      * Method that implements the user signup endpoint.
@@ -88,7 +91,7 @@ public class UserController {
     /**
      * Method that implements user signin endpoint.
      *
-     * @param authorization string containing "Basic username:password" where "username:password" is Base64 encoded
+     * @param authorization String containing "Basic username:password" where "username:password" is Base64 encoded
      * @return ResponseEntity with SignInResponse, HTTPHeader, and HTTPStatus
      * @throws AuthenticationFailedException in cases where the password is wrong or user does not exist
      */
@@ -98,7 +101,6 @@ public class UserController {
             AuthenticationFailedException{
 
         byte[] decodeAuth = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
-        System.out.println(decodeAuth);
         String decodedAuth = new String(decodeAuth);
         String[] decodedAuthArray = decodedAuth.split(":");
 
@@ -114,6 +116,26 @@ public class UserController {
         headers.add("access_token", userAuthToken.getAccessToken());
 
         return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Method that implements signout endpoint.
+     *
+     * @param accessToken String containing access token of the signed in  user
+     * @return SignOutResponse with SignOutResponse, and HTTPStatus
+     * @throws SignOutRestrictedException in cases where the access token cannot be found in the db and the user is not currently signed in
+     */
+
+    @PostMapping(path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<SignoutResponse> signOut(@RequestHeader("authorization") String accessToken)
+            throws SignOutRestrictedException {
+
+        UserAuthTokenEntity userAuthTokenEntity = userService.getUserAuthTokenEntityByAcessToken(accessToken);
+
+        SignoutResponse signoutResponse = new SignoutResponse().id(userAuthTokenEntity.getUuid())
+                .message("SIGNED OUT SUCCESSFULLY");
+
+        return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
     }
 
 }

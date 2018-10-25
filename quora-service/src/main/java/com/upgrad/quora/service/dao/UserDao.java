@@ -82,4 +82,24 @@ public class UserDao {
         entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
+
+    /**
+     * Method to get UserAuthTokenEntity from the db given an access token.
+     *
+     * @param accessToken String containing access token of user
+     * @return UserAuthTokenEntity containing the given access token
+     */
+
+    public UserAuthTokenEntity findUserAuthTokenEntityByAccessToken(String accessToken) {
+
+        try{
+            String query = "select u from UserAuthTokenEntity u where u.accessToken = :token";
+            return entityManager.createQuery(query, UserAuthTokenEntity.class)
+                    .setParameter("token", accessToken).getSingleResult();
+        } catch (NoResultException nre) {
+
+            return null;
+        }
+
+    }
 }
