@@ -1,36 +1,23 @@
 package com.upgrad.quora.service.business;
 
-
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
-import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * @author Karan Pillai (https://github.com/KaranP3)
- * Description - This class is the Service class for user profile related methods.
- */
 
 @Service
-public class UserProfileService {
+public class AuthorizationService {
+
+    @Autowired
+    private UserDao userDao;
 
     @Autowired
     UserService userService;
 
-    @Autowired
-    UserDao userDao;
 
-    /**
-     * Method to get UserAuthTokenEntity by access token.
-     *
-     * @param accessToken String containing access token
-     * @return UserAuthTokenEntity corresponding to the access token
-     * @throws AuthenticationFailedException in cases where the user has not signed in or is signed out.
-     */
-
-    public UserAuthTokenEntity getUserAuthTokenEntityByAccessToken(String accessToken) throws AuthorizationFailedException {
+    public UserAuthTokenEntity getUserAuthTokenEntity(String accessToken) throws AuthorizationFailedException {
 
         if (userDao.findUserAuthTokenEntityByAccessToken(accessToken) == null) {
 
@@ -51,4 +38,5 @@ public class UserProfileService {
 
         }
     }
+
 }

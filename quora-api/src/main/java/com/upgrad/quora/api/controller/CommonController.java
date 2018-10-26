@@ -6,6 +6,7 @@ import com.upgrad.quora.service.business.UserService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class CommonController {
     @GetMapping(path =  "/userprofile/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UserDetailsResponse> userProfile (@RequestHeader("authorization") String accessToken ,
                                                            @PathVariable String userId)
-            throws AuthenticationFailedException, UserNotFoundException {
+            throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userProfileService
                 .getUserAuthTokenEntityByAccessToken(accessToken);

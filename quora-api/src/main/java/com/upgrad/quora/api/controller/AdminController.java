@@ -7,6 +7,7 @@ import com.upgrad.quora.service.business.UserService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,14 +48,14 @@ public class AdminController {
     @DeleteMapping(path = "/admin/user/{userId}")
     public ResponseEntity<UserDeleteResponse> userDelete(@RequestHeader("authorization") String accessToken,
                                                          @PathVariable String userId) throws
-            AuthenticationFailedException, UserNotFoundException {
+            AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userProfileService.getUserAuthTokenEntityByAccessToken(accessToken);
         UserEntity userEntity = userAuthTokenEntity.getUser();
 
         if (userEntity.getRole().equals("nonadmin")) {
 
-            throw new AuthenticationFailedException("ATHR-003",
+            throw new AuthorizationFailedException("ATHR-003",
                     "Unauthorized Access, Entered user is not an admin");
         } else {
 
