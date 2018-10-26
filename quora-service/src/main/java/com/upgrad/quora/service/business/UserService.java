@@ -4,6 +4,7 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -77,16 +78,36 @@ public class UserService {
     }
 
     /**
-     * Method to get userAuthTokenEntity by access token.
+     * Method to get user by UUID.
+     *
+     * @param uuid String containing UUID of the user we are looking for
+     * @return UserEntity of the user with the given UUID
+     * @throws UserNotFoundException in cases where there is no user in the DB with the given UUID
+     */
+
+    public UserEntity getUserByUUID (String uuid) throws UserNotFoundException {
+
+        if (userDao.findUserByUUID(uuid) == null) {
+
+            throw new UserNotFoundException("USR-001", "User with entered uuid does not exist");
+        } else {
+
+            return userDao.findUserByUUID(uuid);
+        }
+    }
+
+    /**
+     * Method to get userAuthTokenEntity by access token and set logout timestamp for signout endpoint.
      *
      * @param accessToken access token assigned to the user
      * @return UserAuthTokenEntity of user corresponding to the access token
      */
 
-    public UserAuthTokenEntity getUserAuthTokenEntityByAcessToken(String accessToken)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public UserAuthTokenEntity getUserAuthTokenEntityByAccessToken(String accessToken)
             throws SignOutRestrictedException {
 
-        final UserAuthTokenEntity userAuthTokenEntity =
+        UserAuthTokenEntity userAuthTokenEntity =
                 userDao.findUserAuthTokenEntityByAccessToken(accessToken);
 
         if (userAuthTokenEntity == null) {
@@ -99,4 +120,5 @@ public class UserService {
             return userAuthTokenEntity;
         }
     }
+
 }
