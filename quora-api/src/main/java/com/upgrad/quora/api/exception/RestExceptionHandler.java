@@ -4,6 +4,7 @@ import com.upgrad.quora.api.model.ErrorResponse;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -47,7 +48,7 @@ public class RestExceptionHandler {
                                                                        WebRequest request) {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
-                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.UNAUTHORIZED);
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.FORBIDDEN);
     }
 
     /**
@@ -64,5 +65,21 @@ public class RestExceptionHandler {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse().code(ex.getCode())
                 .message(ex.getErrorMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Method that implements exception handler for UserNotFoundException
+     *
+     * @param ex instance of UserNotFoundException
+     * @param request instance of WebRequest
+     * @return ResponseEntity with error response
+     */
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> userNotFoundException(UserNotFoundException ex,
+                                                               WebRequest request) {
+
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse()
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
     }
 }

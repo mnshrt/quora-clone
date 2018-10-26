@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -130,7 +131,7 @@ public class UserController {
     public ResponseEntity<SignoutResponse> signOut(@RequestHeader("authorization") String accessToken)
             throws SignOutRestrictedException {
 
-        UserAuthTokenEntity userAuthTokenEntity = userService.getUserAuthTokenEntityByAcessToken(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity = userService.getUserAuthTokenEntityByAccessToken(accessToken);
 
         SignoutResponse signoutResponse = new SignoutResponse().id(userAuthTokenEntity.getUuid())
                 .message("SIGNED OUT SUCCESSFULLY");

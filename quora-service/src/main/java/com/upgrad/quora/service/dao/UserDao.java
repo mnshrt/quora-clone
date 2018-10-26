@@ -70,6 +70,20 @@ public class UserDao {
         }
     }
 
+    public UserEntity findUserByUUID(String uuid) {
+
+        try {
+            String query = "select u from UserEntity u where u.uuid = :uuid";
+            return entityManager.createQuery(query, UserEntity.class)
+                    .setParameter("uuid", uuid).getSingleResult();
+
+        } catch (NoResultException nre) {
+
+            return null;
+        }
+
+    }
+
     /**
      * Method to create auth token in DB.
      *
