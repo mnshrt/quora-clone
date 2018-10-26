@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  * @author Karan Pillai (https://github.com/KaranP3)
@@ -82,6 +83,21 @@ public class UserDao {
             return null;
         }
 
+    }
+
+    /**
+     * Method to delete user by UUID in the db.
+     *
+     * @param uuid String containing UUID of the user to be deleted.
+     */
+
+    public void deleteUserByUUID(String uuid) {
+
+        String query = "delete from UserEntity u where u.uuid = :uuid";
+
+        Query finalQuery = entityManager.createQuery(query)
+                .setParameter("uuid", uuid);
+        finalQuery.executeUpdate();
     }
 
     /**
