@@ -11,6 +11,7 @@ import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -54,31 +55,21 @@ public class QuestionController {
             QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid())
                     .status("QUESTION CREATED");
 
-            return new ResponseEntity<QuestionResponse> (questionResponse, HttpStatus.OK);
+            return new ResponseEntity<> (questionResponse, HttpStatus.OK);
     }
 
 /*    @GetMapping(path="/question/all",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<QuestionDetailsResponse> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
+    public ResponseEntity<List<JSONObject>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
+
         List<QuestionEntity> questionEntityList = new ArrayList<>();
+
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken);
-        StringBuilder sb = new StringBuilder("");
+
         if (userAuthTokenEntity != null) {
-            questionEntityList = questionService.getAllQuestions();
-            //Adding new content for testing
-            List<JSONObject> entities = new ArrayList<JSONObject>();
-            StringBuilder sb = new StringBuilder("");
-            //ResponseEntity<QuestionEntity> responseEntity = new ResponseEntity<>()
-            for (QuestionEntity n : questionEntityList) {
-                QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
-                questionDetailsResponse.setId(n.getUuid());
-                questionDetailsResponse.setContent(n.getContent());
-
-
-                sb.append(questionDetailsResponse.toString());
-            }
+           questionEntityList = questionService.getAllQuestions();
         }
 
-        return new ResponseEntity(, HttpStatus.OK);
+        return new ResponseEntity(questionEntityList, HttpStatus.OK);
 
     }*/
 
@@ -97,5 +88,20 @@ public class QuestionController {
 
 
     }
+
+    @DeleteMapping(path = "/question/delete/{questionId}")
+    public ResponseEntity<QuestionDeleteResponse> questionDelete(@RequestHeader("authorization") String accessToken,
+                                                             @PathVariable String questionId) throws
+
+            AuthorizationFailedException, InvalidQuestionException {
+
+            String id = questionService.deleteQuestion(questionId,accessToken);
+
+            QuestionDeleteResponse questionDeleteResponse = new QuestionDeleteResponse().id(id)
+                    .status("QUESTION DELETED");
+
+            return new ResponseEntity<> (questionDeleteResponse, HttpStatus.OK);
+    }
+
 }
 
