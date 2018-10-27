@@ -84,4 +84,43 @@ public class AnswerService {
         return answerDao.updateAnswer(answerEntity);
     }
 
-  }
+    public String deleteAnswer(String answerId, String accessToken) throws AuthorizationFailedException, InvalidAnswerException {
+        UserAuthTokenEntity userAuthTokenEntity = userDao.findUserAuthTokenEntityByAccessToken(accessToken);
+
+
+        if (userAuthTokenEntity == null) {
+
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+
+        } else {
+
+            String logoutAt = String.valueOf(userDao.findUserAuthTokenEntityByAccessToken(accessToken)
+                    .getLogoutAt());
+
+            if (!logoutAt.equals("null")) {
+
+                throw new AuthorizationFailedException("ATHR-002",
+                        "User is signed out.Sign in first to delete the answer");
+            } else {
+
+                String user_id = userAuthTokenEntity.getUser().getUuid();
+
+
+                AnswerEntity existingAnswerEntity = answerDao.getAnswerById(answerId);
+
+                if (existingAnswerEntity == null) {
+                    throw new InvalidAnswerException("ANS-001", "Entered answer uuid does not exist");
+                } else if (!user_id.equals(existingAnswerEntity.getUuid())) {
+                    throw new AuthorizationFailedException("ATHR-003", "Only the answer owner can delete the answer");
+                } else {
+                    answerDao.deleteAnswerByUUID(answerId);
+                    return (answerId);
+                }
+            }
+        }
+
+
+    }
+
+
+}

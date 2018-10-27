@@ -39,6 +39,15 @@ public class AnswerDao {
         }
     }
 
+    public void deleteAnswerByUUID(String uuid) {
+
+        String query = "delete from AnswerEntity u where u.uuid = :uuid";
+
+        Query finalQuery = entityManager.createQuery(query,AnswerEntity.class)
+                .setParameter("uuid", uuid);
+        finalQuery.executeUpdate();
+    }
+
 
 
 

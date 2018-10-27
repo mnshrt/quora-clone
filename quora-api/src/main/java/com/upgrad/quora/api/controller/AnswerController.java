@@ -72,5 +72,18 @@ public class AnswerController {
         return new ResponseEntity<>(answerEditResponse, HttpStatus.OK);
 
 
-    }
+        @DeleteMapping(path = "/answer/delete/{answerId}")
+        public ResponseEntity<AnswerDeleteResponse> answerDelete(@RequestHeader("authorization") String accessToken,
+                @PathVariable String answerId) throws
+        AuthorizationFailedException, InvalidAnswerException {
+
+            String id = answerService.deleteAnswer(answerId,accessToken);
+
+            AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(id)
+                    .status("ANSWER DELETED");
+
+            return new ResponseEntity<> (answerDeleteResponse, HttpStatus.OK);
+
+
+        }
 }
