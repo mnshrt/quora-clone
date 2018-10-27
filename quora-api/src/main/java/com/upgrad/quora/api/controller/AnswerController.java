@@ -55,7 +55,7 @@ public class AnswerController {
         AnswerResponse answerResponse = new AnswerResponse().id(createdAnswerEntity.getUuid())
                 .status("ANSWER CREATED");
 
-        return new ResponseEntity<>(answerResponse, HttpStatus.OK);
+        return new ResponseEntity<AnswerResponse>(answerResponse, HttpStatus.OK);
     }
 
     @GetMapping(path = "/answer/edit/{answerId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -69,7 +69,7 @@ public class AnswerController {
 
         AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updatedAnswerEntity.getUuid()).status("ANSWER UPDATED");
 
-        return new ResponseEntity<>(answerEditResponse, HttpStatus.OK);
+        return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
 
 
         @DeleteMapping(path = "/answer/delete/{answerId}")
@@ -82,7 +82,7 @@ public class AnswerController {
             AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(id)
                     .status("ANSWER DELETED");
 
-            return new ResponseEntity<> (answerDeleteResponse, HttpStatus.OK);
+            return new ResponseEntity<AnswerDeleteResponse> (answerDeleteResponse, HttpStatus.OK);
 
 
         }
