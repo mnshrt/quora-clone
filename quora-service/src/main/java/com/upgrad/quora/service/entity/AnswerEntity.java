@@ -62,6 +62,10 @@ public class AnswerEntity implements Serializable {
         this.uuid = uuid;
     }
 
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
+    }
+
     public ZonedDateTime getDate() {
         return date;
     }
