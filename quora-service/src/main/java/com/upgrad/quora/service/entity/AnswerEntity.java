@@ -11,37 +11,46 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-@Table(name="question")
 @Entity
-public class QuestionEntity implements Serializable {
+@Table(name = "answer")
+
+public class AnswerEntity implements Serializable {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name="uuid")
     @Size(max = 200)
     private String uuid;
 
-
-    @Column(name = "content")
-    @Size(max=500)
+    @Column(name = "ans")
     @NotNull
-    private String content;
-
-    @Column(name = "date")
-    private ZonedDateTime date;
-
+    @Size(max = 255)
+    private String ans;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public int getId() {
+    @JoinColumn(name = "question_id")
+    @NotNull
+    private QuestionEntity question;
+
+    @Column(name = "date")
+    private ZonedDateTime date;
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -53,33 +62,37 @@ public class QuestionEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
     }
 
     public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setAns(String ans) {
+        this.ans = ans;
+    }
+
+    public String getAns()
+    {
+        return ans;
     }
 
     public UserEntity getUser() {
         return user;
     }
 
-    public void setUserId(UserEntity user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+    public QuestionEntity getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(QuestionEntity quesId) {
+        this.question = quesId;
     }
 
     @Override
@@ -91,5 +104,6 @@ public class QuestionEntity implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
+
 
 }
