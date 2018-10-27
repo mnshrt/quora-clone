@@ -1,5 +1,6 @@
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./com/upgrad/quora/api/model/AnswerDeleteResponse.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./io/swagger/configuration/HomeController.java
+/home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/src/main/java/com/upgrad/quora/api/controller/QuestionController.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./com/upgrad/quora/api/model/SignupUserResponse.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/src/main/java/com/upgrad/quora/api/controller/CommonController.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./com/upgrad/quora/api/model/QuestionResponse.java
@@ -23,6 +24,7 @@
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./com/upgrad/quora/api/model/AnswerDetailsResponse.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./com/upgrad/quora/api/model/AnswerRequest.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./io/swagger/api/NotFoundException.java
+/home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/src/main/java/com/upgrad/quora/api/controller/AdminController.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./com/upgrad/quora/api/model/QuestionEditResponse.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/target/generated-sources/./io/swagger/api/ApiException.java
 /home/mukul/Documents/upgrad/api-2/Quora Project/Trello_quora/quora-api/src/main/java/com/upgrad/quora/api/QuoraApiApplication.java
