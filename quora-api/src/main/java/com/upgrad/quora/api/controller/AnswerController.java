@@ -47,7 +47,7 @@ public class AnswerController {
 
         //answerEntity.setUserId(userAuthTokenEntity.getUser());
         answerEntity.setUser(userAuthTokenEntity.getUser());
-        answerEntity.setAns(answerRequest.getAns());
+        answerEntity.setAns(answerRequest.getAnswer());
         answerEntity.setDate(ZonedDateTime.now());
 
 
@@ -70,9 +70,9 @@ public class AnswerController {
         AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updatedAnswerEntity.getUuid()).status("ANSWER UPDATED");
 
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
+    }
 
-
-        @DeleteMapping(path = "/answer/delete/{answerId}")
+   /*     @DeleteMapping(path = "/answer/delete/{answerId}")
         public ResponseEntity<AnswerDeleteResponse> answerDelete(@RequestHeader("authorization") String accessToken,
                 @PathVariable String answerId) throws
         AuthorizationFailedException, InvalidAnswerException {
@@ -85,5 +85,5 @@ public class AnswerController {
             return new ResponseEntity<AnswerDeleteResponse> (answerDeleteResponse, HttpStatus.OK);
 
 
-        }
+        }*/
 }
