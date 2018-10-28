@@ -1,8 +1,9 @@
 package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.UserDetailsResponse;
-import com.upgrad.quora.service.business.UserProfileService;
+import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.UserService;
+import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
@@ -23,10 +24,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
  */
 
 @Controller
-public class CommonController {
+public class CommonController implements EndPointIdentifier {
+
+    // Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
 
     @Autowired
-    UserProfileService userProfileService;
+    AuthorizationService authorizationService;
 
     @Autowired
     UserService userService;
@@ -46,8 +49,7 @@ public class CommonController {
                                                            @PathVariable String userId)
             throws AuthorizationFailedException, UserNotFoundException {
 
-        UserAuthTokenEntity userAuthTokenEntity = userProfileService
-                .getUserAuthTokenEntityByAccessToken(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,USER_ENDPOINT);
 
         UserEntity userEntity = userService.getUserByUUID(userId);
 

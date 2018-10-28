@@ -2,8 +2,9 @@ package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.UserDeleteResponse;
 import com.upgrad.quora.service.business.AdminService;
-import com.upgrad.quora.service.business.UserProfileService;
+import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.UserService;
+import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
@@ -24,13 +25,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @Controller
-public class AdminController {
+public class AdminController implements EndPointIdentifier {
 
     @Autowired
     UserService userService;
 
     @Autowired
-    UserProfileService userProfileService;
+    AuthorizationService authorizationService;
 
     @Autowired
     AdminService adminService;
@@ -50,7 +51,7 @@ public class AdminController {
                                                          @PathVariable String userId) throws
             AuthorizationFailedException, UserNotFoundException {
 
-        UserAuthTokenEntity userAuthTokenEntity = userProfileService.getUserAuthTokenEntityByAccessToken(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,EndPointIdentifier.ADMIN_ENDPOINT);
         UserEntity userEntity = userAuthTokenEntity.getUser();
 
         if (userEntity.getRole().equals("nonadmin")) {

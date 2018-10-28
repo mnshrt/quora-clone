@@ -6,6 +6,7 @@ import com.upgrad.quora.service.business.AnswerService;
 import com.upgrad.quora.service.business.AuthenticationService;
 import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.QuestionService;
+import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
@@ -27,7 +28,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/")
-public class AnswerController {
+public class AnswerController implements EndPointIdentifier {
+
+    // Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
     @Autowired
     QuestionService questionService;
 
@@ -37,13 +40,15 @@ public class AnswerController {
     @Autowired
     AnswerService answerService;
 
-    @PostMapping(path = "/question/{questionId}answer/create", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<AnswerResponse> createAnswer(@RequestHeader("authorization") String accessToken,
+
+
+    @PostMapping(path = "/question/{questionId}/answer/create", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<AnswerResponse> createAnswer(@RequestHeader("authorization") String accessToken,@PathVariable String questionId,
                                                        final AnswerRequest answerRequest) throws
             AuthorizationFailedException {
 
         final AnswerEntity answerEntity = new AnswerEntity();
-        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,ANSWER_ENDPOINT);
 
         //answerEntity.setUserId(userAuthTokenEntity.getUser());
         answerEntity.setUser(userAuthTokenEntity.getUser());

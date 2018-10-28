@@ -1,5 +1,6 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ import java.util.List;
  * Description - This class is the Service class for question related methods.
  */
 @Service
-public class QuestionService {
+public class QuestionService implements EndPointIdentifier {
 
     @Autowired
     UserDao userDao;
@@ -31,9 +33,14 @@ public class QuestionService {
     @Autowired
     AuthorizationService authorizationService;
 
+    @Autowired
+    QuestionValidityCheckService questionValidityCheckService;
+
+    @Autowired
+    UserAuthTokenValidifierService userAuthTokenValidifierService;
+
     /**
      * Method to create a new user.
-     *
      * @param questionEntity the QuestionEntity to be created
      * @return created UserEntity
      */
@@ -58,21 +65,12 @@ public class QuestionService {
     public List<QuestionEntity> getAllQuestions(String accessToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.findUserAuthTokenEntityByAccessToken(accessToken);
 
-        if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        List<QuestionEntity> questionEntityList= new ArrayList<>();
 
-        } else {
-            String logoutAt = String.valueOf(userDao.findUserAuthTokenEntityByAccessToken(accessToken)
-                    .getLogoutAt());
-
-            if (!logoutAt.equals("null")) {
-
-                throw new AuthorizationFailedException("ATHR-002",
-                        "User is signed out.Sign in first to get all questions");
-            } else {
-                return questionDao.getAllQuestions();
+       if(userAuthTokenValidifierService.userAuthTokenValidityCheck(accessToken,GET_ALL_QUESTIONS)){
+                questionEntityList= questionDao.getAllQuestions();
             }
-        }
+        return questionEntityList;
 
 
     }
@@ -89,37 +87,23 @@ public class QuestionService {
     public QuestionEntity checkQuestion(String accessToken, String questionId) throws AuthorizationFailedException, InvalidQuestionException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.findUserAuthTokenEntityByAccessToken(accessToken);
-
-        if (userAuthTokenEntity == null) {
-
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-
-        } else {
-
-            String logoutAt = String.valueOf(userAuthTokenEntity
-                    .getLogoutAt());
-
-            if (!logoutAt.equals("null")) {
-
-                throw new AuthorizationFailedException("ATHR-002",
-                        "User is signed out.Sign in first to edit the question");
-            } else {
-
+        QuestionEntity existingQuestionEntity= null;
+        if(userAuthTokenValidifierService.userAuthTokenValidityCheck(accessToken,CHECK_QUESTION)){
                 UserEntity user = userAuthTokenEntity.getUser();
 
+                existingQuestionEntity = questionValidityCheckService.checkQuestionIsValid(questionId);
 
-                QuestionEntity existingQuestionEntity = questionDao.getQuestionById(questionId);
-
-                if (existingQuestionEntity == null) {
-                    throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
-                } else if (!user.equals(existingQuestionEntity.getUser())) {
+                if (!user.equals(existingQuestionEntity.getUser())) {
                     throw new AuthorizationFailedException("ATHR-003", "Only the question owner can edit the question");
                 } else {
                     return existingQuestionEntity;
                 }
-            }
+
         }
+        return existingQuestionEntity;
     }
+
+
 
     /**
      * Method to update a question
@@ -147,37 +131,22 @@ public class QuestionService {
     public String deleteQuestion(String questionId, String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.findUserAuthTokenEntityByAccessToken(accessToken);
 
-
-        if (userAuthTokenEntity == null) {
-
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-
-        } else {
-
-            String logoutAt = String.valueOf(userDao.findUserAuthTokenEntityByAccessToken(accessToken)
-                    .getLogoutAt());
-
-            if (!logoutAt.equals("null")) {
-
-                throw new AuthorizationFailedException("ATHR-002",
-                        "User is signed out.Sign in first to delete the question");
-            } else {
-
+        String deletedQuestionid=null;
+        if(userAuthTokenValidifierService.userAuthTokenValidityCheck(accessToken,DELETE_QUESTION)){
                 UserEntity user = userAuthTokenEntity.getUser();
 
 
-                QuestionEntity existingQuestionEntity = questionDao.getQuestionById(questionId);
+                QuestionEntity existingQuestionEntity = questionValidityCheckService.checkQuestionIsValid(questionId);
 
-                if (existingQuestionEntity == null) {
-                    throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
-                } else if (!user.equals(existingQuestionEntity.getUser())) {
+                if (!user.equals(existingQuestionEntity.getUser())) {
                     throw new AuthorizationFailedException("ATHR-003", "Only the question owner can delete the question");
                 } else {
                     questionDao.deleteUserByUUID(questionId);
-                    return (questionId);
+                    deletedQuestionid=questionId;
+                    return (deletedQuestionid);
                 }
             }
-        }
+        return deletedQuestionid;
     }
 
     /**
@@ -195,31 +164,19 @@ public class QuestionService {
         UserAuthTokenEntity userAuthTokenEntity = userDao.findUserAuthTokenEntityByAccessToken(accessToken);
 
 
+        List<QuestionEntity> questionEntityList = new ArrayList<>();
         if (userDao.findUserByUUID(userId) == null) {
 
             throw new UserNotFoundException("USR-001", "User with entered uuid whose question details are to be seen does not exist");
 
-        } else if (userAuthTokenEntity == null) {
-
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-
-        } else {
-
-            String logoutAt = String.valueOf(userDao.findUserAuthTokenEntityByAccessToken(accessToken)
-                    .getLogoutAt());
-
-            if (!logoutAt.equals("null")) {
-
-                throw new AuthorizationFailedException("ATHR-002",
-                        "User is signed out.Sign in first to get all questions posted by a specific user");
-            } else {
+        } else if (userAuthTokenValidifierService.userAuthTokenValidityCheck(accessToken,GET_QUESTION_BY_USER)) {
 
                 UserEntity userEntity = userAuthTokenEntity.getUser();
 
-                List<QuestionEntity> questionEntityList = questionDao.getQuestionByUser(userEntity);
+                questionEntityList = questionDao.getQuestionByUser(userEntity);
 
                 return questionEntityList;
-            }
         }
+        return questionEntityList;
     }
 }

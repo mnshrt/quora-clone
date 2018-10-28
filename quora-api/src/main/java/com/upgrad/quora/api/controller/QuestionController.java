@@ -4,6 +4,7 @@ package com.upgrad.quora.api.controller;
 import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.QuestionService;
+import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -27,7 +28,9 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
-public class QuestionController {
+public class QuestionController implements EndPointIdentifier {
+
+    // Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
 
     @Autowired
     QuestionService questionService;
@@ -50,7 +53,7 @@ public class QuestionController {
             AuthorizationFailedException {
 
         final QuestionEntity questionEntity = new QuestionEntity();
-        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
 
         questionEntity.setUuid(UUID.randomUUID().toString());
         questionEntity.setUserId(userAuthTokenEntity.getUser());
