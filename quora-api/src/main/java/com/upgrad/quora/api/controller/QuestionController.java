@@ -77,7 +77,7 @@ public class QuestionController {
 
                  questionDetailsResponseList.add(questionDetailsResponse);
              }
-           //  return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
+
          }
 
         return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
