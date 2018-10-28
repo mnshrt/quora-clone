@@ -19,14 +19,14 @@ public class RestExceptionHandler {
     /**
      * Method that implements the exception handler for the SignUpRestrictedException.
      *
-     * @param ex instance of SignUpRestrictedException
+     * @param ex      instance of SignUpRestrictedException
      * @param request instance of WebRequest
      * @return ResponseEntity with the error response
      */
 
     @ExceptionHandler(SignUpRestrictedException.class)
-    public ResponseEntity<ErrorResponse> signUpRestrictedException (SignUpRestrictedException ex,
-                                                                    WebRequest request){
+    public ResponseEntity<ErrorResponse> signUpRestrictedException(SignUpRestrictedException ex,
+                                                                   WebRequest request) {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.CONFLICT);
@@ -35,7 +35,7 @@ public class RestExceptionHandler {
     /**
      * Method that implements the exception handler for AuthenticationFailedException
      *
-     * @param ex instance of AuthenticationFailedException
+     * @param ex      instance of AuthenticationFailedException
      * @param request instance of WebRequest
      * @return ResponseEntity with the error response
      */
@@ -51,7 +51,7 @@ public class RestExceptionHandler {
     /**
      * Method that implements exception handler for SignOutRestrictedException
      *
-     * @param ex instance of SignOutRestrictedException
+     * @param ex      instance of SignOutRestrictedException
      * @param request instance of WebRequest
      * @return ResponseEntity with error response
      */
@@ -67,7 +67,7 @@ public class RestExceptionHandler {
     /**
      * Method that implements exception handler for UserNotFoundException
      *
-     * @param ex instance of UserNotFoundException
+     * @param ex      instance of UserNotFoundException
      * @param request instance of WebRequest
      * @return ResponseEntity with error response
      */
@@ -81,17 +81,31 @@ public class RestExceptionHandler {
     }
 
 
+    /**
+     * Method that implements exception handler for AuthorizationFailedException
+     *
+     * @param ex      instance of AuthorizationFailedException
+     * @param request instance of WebRequest
+     * @return ResponseEntity with error response
+     */
     @ExceptionHandler(AuthorizationFailedException.class)
     public ResponseEntity<ErrorResponse> authorizationFailedException(AuthorizationFailedException ex,
-                                                               WebRequest request) {
+                                                                      WebRequest request) {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Method that implements exception handler for
+     *
+     * @param ex      instance of InvalidQuestionException
+     * @param request instance of WebRequest
+     * @return ResponseEntity with error response
+     */
     @ExceptionHandler(InvalidQuestionException.class)
     public ResponseEntity<ErrorResponse> invalidQuestionException(InvalidQuestionException ex,
-                                                                      WebRequest request) {
+                                                                  WebRequest request) {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);

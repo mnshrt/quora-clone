@@ -16,7 +16,13 @@ public class AuthorizationService {
     @Autowired
     UserService userService;
 
-
+    /**
+     * Method to authorize a user based on the given access token
+     *
+     * @param accessToken assigned to the User
+     * @return UserAuthTokenEntity which has the authorisation details of the user
+     * @throws AuthorizationFailedException
+     */
     public UserAuthTokenEntity getUserAuthTokenEntity(String accessToken) throws AuthorizationFailedException {
 
         if (userDao.findUserAuthTokenEntityByAccessToken(accessToken) == null) {

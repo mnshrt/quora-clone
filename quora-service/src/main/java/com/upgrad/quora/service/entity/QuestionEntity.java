@@ -11,7 +11,12 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-@Table(name="question")
+/**
+ * @author Manish Rout (https://github.com/mnshrt)
+ * Description - Entity class for the Question table
+ */
+
+@Table(name = "question")
 @Entity
 public class QuestionEntity implements Serializable {
     @Id
@@ -19,13 +24,13 @@ public class QuestionEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="uuid")
+    @Column(name = "uuid")
     @Size(max = 200)
     private String uuid;
 
 
     @Column(name = "content")
-    @Size(max=500)
+    @Size(max = 500)
     @NotNull
     private String content;
 
@@ -34,7 +39,7 @@ public class QuestionEntity implements Serializable {
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
     public int getId() {
