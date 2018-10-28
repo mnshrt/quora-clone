@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-@Table(name="questions")
+@Table(name="question")
 @Entity
 public class QuestionEntity implements Serializable {
     @Id
@@ -34,7 +34,7 @@ public class QuestionEntity implements Serializable {
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
     private UserEntity user;
 
     public int getId() {
