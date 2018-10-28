@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserAuthTokenValidifierService implements EndPointIdentifier {
 
+
     @Autowired
     UserDao userDao;
 
@@ -50,7 +51,7 @@ public class UserAuthTokenValidifierService implements EndPointIdentifier {
                 }
 
                 throw new AuthorizationFailedException("ATHR-002",
-                       errorMessage);
+                        errorMessage);
             } else {
                 return true;
             }

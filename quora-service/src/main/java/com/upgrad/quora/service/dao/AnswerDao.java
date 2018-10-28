@@ -2,7 +2,6 @@ package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
-import com.upgrad.quora.service.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -43,13 +42,22 @@ public class AnswerDao {
 
         String query = "delete from AnswerEntity u where u.uuid = :uuid";
 
-        Query finalQuery = entityManager.createQuery(query,AnswerEntity.class)
+        Query finalQuery = entityManager.createQuery(query)
                 .setParameter("uuid", uuid);
-        finalQuery.executeUpdate();
+        int rowsAffected = finalQuery.executeUpdate();
     }
 
 
+    public List<AnswerEntity> getAllAnswersToQuestion(QuestionEntity questionEntity) {
+        try {
 
+            String query = "select u from AnswerEntity u where u.question = :userInput";
+            return entityManager.createQuery(query, AnswerEntity.class)
+                    .setParameter("userInput", questionEntity).getResultList();
 
+        } catch (NoResultException nre) {
 
+            return null;
+        }
+    }
 }

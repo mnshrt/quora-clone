@@ -39,6 +39,7 @@ public class QuestionController implements EndPointIdentifier {
     AuthorizationService authorizationService;
 
 
+
     /**
      * Method implements the question creation endpoint
      *
@@ -108,7 +109,7 @@ public class QuestionController implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      * @throws InvalidQuestionException
      */
-    @GetMapping(path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestionContent(@RequestHeader("authorization") String accessToken, @PathVariable String questionId, QuestionEditRequest questionEditRequest)
             throws AuthorizationFailedException, InvalidQuestionException {
 
@@ -157,7 +158,7 @@ public class QuestionController implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      * @throws UserNotFoundException
      */
-    @GetMapping(path = "/all/{userId}")
+    @GetMapping(path = "/question/all/{userId}")
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser(@RequestHeader("authorization") String accessToken,
                                                                                @PathVariable String userId) throws AuthorizationFailedException, UserNotFoundException {
 

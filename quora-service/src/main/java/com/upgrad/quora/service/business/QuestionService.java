@@ -135,11 +135,10 @@ public class QuestionService implements EndPointIdentifier {
         if(userAuthTokenValidifierService.userAuthTokenValidityCheck(accessToken,DELETE_QUESTION)){
                 UserEntity user = userAuthTokenEntity.getUser();
 
-
                 QuestionEntity existingQuestionEntity = questionValidityCheckService.checkQuestionIsValid(questionId);
 
-                if (!user.equals(existingQuestionEntity.getUser())) {
-                    throw new AuthorizationFailedException("ATHR-003", "Only the question owner can delete the question");
+            if ((!user.equals(existingQuestionEntity.getUser()) || (!user.getRole().equals("admin")))) {
+                throw new AuthorizationFailedException("ATHR-003", "Only the question owner or admin can delete the question");
                 } else {
                     questionDao.deleteUserByUUID(questionId);
                     deletedQuestionid=questionId;

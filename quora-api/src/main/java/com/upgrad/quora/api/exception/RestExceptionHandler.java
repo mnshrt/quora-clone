@@ -93,12 +93,11 @@ public class RestExceptionHandler {
                                                                       WebRequest request) {
 
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
-                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.FORBIDDEN);
     }
 
     /**
      * Method that implements exception handler for
-     *
      * @param ex      instance of InvalidQuestionException
      * @param request instance of WebRequest
      * @return ResponseEntity with error response

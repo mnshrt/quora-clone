@@ -34,6 +34,7 @@ public class AnswerEntity implements Serializable {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @ManyToOne
     @JoinColumn(name = "question_id")
     @NotNull
     private QuestionEntity question;
