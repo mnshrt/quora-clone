@@ -95,6 +95,7 @@ public class AnswerController implements EndPointIdentifier {
 
         List<AnswerEntity> answerEntityList = answerService.getAllAnswersToQuestion(accessToken, questionId);
 
+
         QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
         String questionContent = questionEntity.getContent();
         List<AnswerDetailsResponse> answerDetailsResponseList = new ArrayList<>();

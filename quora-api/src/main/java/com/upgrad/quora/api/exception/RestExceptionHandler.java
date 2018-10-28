@@ -110,4 +110,19 @@ public class RestExceptionHandler {
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
     }
 
+
+    /**
+     * Method that implements exception handler for
+     *
+     * @param ex      instance of InvalidAnswerException
+     * @param request instance of WebRequest
+     * @return ResponseEntity with error response
+     */
+    @ExceptionHandler(InvalidAnswerException.class)
+    public ResponseEntity<ErrorResponse> invalidAnswerException(InvalidAnswerException ex,
+                                                                WebRequest request) {
+
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse()
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
+    }
 }

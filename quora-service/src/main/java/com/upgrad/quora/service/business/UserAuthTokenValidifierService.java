@@ -46,6 +46,19 @@ public class UserAuthTokenValidifierService implements EndPointIdentifier {
 
                     case GET_QUESTION_BY_USER:
                         errorMessage=GET_QUESTION_BY_USER;
+                        break;
+
+                    case CHECK_ANSWER:
+                        errorMessage = CHECK_ANSWER;
+                        break;
+
+                    case DELETE_ANSWER:
+                        errorMessage = DELETE_ANSWER;
+                        break;
+
+                    case GET_ALL_ANSWERS:
+                        errorMessage = GET_ALL_ANSWERS;
+                        break;
 
 
                 }
