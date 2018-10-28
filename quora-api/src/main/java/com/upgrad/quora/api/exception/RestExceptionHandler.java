@@ -1,10 +1,7 @@
 package com.upgrad.quora.api.exception;
 
 import com.upgrad.quora.api.model.ErrorResponse;
-import com.upgrad.quora.service.exception.AuthenticationFailedException;
-import com.upgrad.quora.service.exception.SignOutRestrictedException;
-import com.upgrad.quora.service.exception.SignUpRestrictedException;
-import com.upgrad.quora.service.exception.UserNotFoundException;
+import com.upgrad.quora.service.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -82,4 +79,22 @@ public class RestExceptionHandler {
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
     }
+
+
+    @ExceptionHandler(AuthorizationFailedException.class)
+    public ResponseEntity<ErrorResponse> authorizationFailedException(AuthorizationFailedException ex,
+                                                               WebRequest request) {
+
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse()
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidQuestionException.class)
+    public ResponseEntity<ErrorResponse> invalidQuestionException(InvalidQuestionException ex,
+                                                                      WebRequest request) {
+
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse()
+                .code(ex.getCode()).message(ex.getErrorMessage()), HttpStatus.NOT_FOUND);
+    }
+
 }

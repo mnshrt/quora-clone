@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
@@ -36,7 +37,9 @@ public class QuestionController {
     @Autowired
     AuthorizationService authorizationService;
 
-    @PostMapping(path = "/question/create", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+
+
+    @PostMapping(path = "/question/create",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") String accessToken,
                                                            final QuestionRequest questionRequest) throws
             AuthorizationFailedException {
@@ -44,45 +47,53 @@ public class QuestionController {
         final QuestionEntity questionEntity = new QuestionEntity();
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken);
 
+        questionEntity.setUuid(UUID.randomUUID().toString());
         questionEntity.setUserId(userAuthTokenEntity.getUser());
         questionEntity.setContent(questionRequest.getContent());
         questionEntity.setDate(ZonedDateTime.now());
 
-
-
-
-         final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionEntity);
+        final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionEntity);
             QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid())
                     .status("QUESTION CREATED");
 
             return new ResponseEntity<> (questionResponse, HttpStatus.OK);
     }
 
-/*    @GetMapping(path="/question/all",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<List<JSONObject>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
 
-        List<QuestionEntity> questionEntityList = new ArrayList<>();
 
-        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken);
 
-        if (userAuthTokenEntity != null) {
-           questionEntityList = questionService.getAllQuestions();
-        }
+    @GetMapping(path="/question/all",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
 
-        return new ResponseEntity(questionEntityList, HttpStatus.OK);
+         List<QuestionEntity> questionEntityList = questionService.getAllQuestions(accessToken);
 
-    }*/
+        List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
+         if(!questionEntityList.isEmpty()) {
 
-    @GetMapping(path="/question/edit/{questionId}",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<QuestionEditResponse> editQuestionContent(QuestionEditRequest questionEditRequest,@RequestHeader("authorization") String accessToken,@PathVariable String questionId)
+             for (QuestionEntity n : questionEntityList) {
+                 QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
+                 questionDetailsResponse.setId(n.getUuid());
+                 questionDetailsResponse.setContent(n.getContent());
+
+                 questionDetailsResponseList.add(questionDetailsResponse);
+             }
+           //  return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
+         }
+
+        return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
+
+    }
+
+    @GetMapping(path="/question/edit/{questionId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<QuestionEditResponse> editQuestionContent(@RequestHeader("authorization") String accessToken,@PathVariable String questionId,QuestionEditRequest questionEditRequest)
             throws AuthorizationFailedException, InvalidQuestionException {
 
 
-            QuestionEntity questionEntity = questionService.checkQuestion(questionId, accessToken);
+            QuestionEntity questionEntity = questionService.checkQuestion(accessToken, questionId);
             questionEntity.setContent(questionEditRequest.getContent());
             QuestionEntity updatedQuestionEntity = questionService.updateQuestion(questionEntity);
 
-            QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(updatedQuestionEntity.getUuid()).status("QUESTION UPDATED");
+            QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(updatedQuestionEntity.getUuid()).status("QUESTION EDITED");
 
             return new ResponseEntity<>(questionEditResponse, HttpStatus.OK);
 
@@ -103,5 +114,23 @@ public class QuestionController {
             return new ResponseEntity<> (questionDeleteResponse, HttpStatus.OK);
     }
 
+    @GetMapping(path= "/all/{userId}")
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser(@RequestHeader("authorization") String accessToken,
+                                                                         @PathVariable String userId) throws AuthorizationFailedException, UserNotFoundException {
+
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestionsByUser(accessToken, userId);
+
+        List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
+        for (QuestionEntity n : questionEntityList) {
+            QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
+            questionDetailsResponse.setId(n.getUuid());
+            questionDetailsResponse.setContent(n.getContent());
+
+            questionDetailsResponseList.add(questionDetailsResponse);
+        }
+        return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
+
+
+    }
 }
 

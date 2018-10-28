@@ -16,6 +16,7 @@ public class QuestionDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+
     public QuestionEntity createQuestion(QuestionEntity questionEntity) {
         entityManager.persist(questionEntity);
         return questionEntity;
@@ -49,7 +50,8 @@ public class QuestionDao {
 
     public QuestionEntity updateQuestion(QuestionEntity questionEntity) {
 
-        return entityManager.merge(questionEntity);
+         entityManager.merge(questionEntity);
+         return questionEntity;
 
     }
 
@@ -57,8 +59,20 @@ public class QuestionDao {
 
         String query = "delete from QuestionEntity u where u.uuid = :uuid";
 
-        Query finalQuery = entityManager.createQuery(query,QuestionEntity.class)
+        Query finalQuery = entityManager.createQuery(query)
                 .setParameter("uuid", uuid);
-        finalQuery.executeUpdate();
+        int rowsAffected = finalQuery.executeUpdate();
+    }
+
+    public List<QuestionEntity> getQuestionByUser(UserEntity user) {
+        try {
+            String query = "select u from QuestionEntity u where u.user = :userInput";
+            return entityManager.createQuery(query,QuestionEntity.class)
+                    .setParameter("userInput", user).getResultList();
+
+        } catch (NoResultException nre) {
+
+            return null;
+        }
     }
 }
